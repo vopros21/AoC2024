@@ -1,6 +1,7 @@
 package com.company;
 
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +14,7 @@ import java.util.Map;
 /**
  * @author Mike Kostenko on 01/12/2024
  */
+@Slf4j
 @NoArgsConstructor
 public class Day01 {
     String filePath;
@@ -35,7 +37,7 @@ public class Day01 {
             left.sort(Integer::compareTo);
             right.sort(Integer::compareTo);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("An error occurred while reading the file: {}", e.getMessage(), e);
         }
     }
 
