@@ -58,7 +58,6 @@ public class Day06 {
                 } else {
                     grid[current.y][current.x] = 'X';
                     current.y--;
-//                    count++;
                 }
             } else if (direction == Direction.DOWN) {
                 if (current.y == grid.length - 1) {
@@ -68,7 +67,6 @@ public class Day06 {
                 } else {
                     grid[current.y][current.x] = 'X';
                     current.y++;
-//                    count++;
                 }
             } else if (direction == Direction.LEFT) {
                 if (current.x == 0) {
@@ -78,7 +76,6 @@ public class Day06 {
                 } else {
                     grid[current.y][current.x] = 'X';
                     current.x--;
-//                    count++;
                 }
             } else {
                 if (current.x == grid[current.y].length - 1) {
@@ -88,7 +85,6 @@ public class Day06 {
                 } else {
                     grid[current.y][current.x] = 'X';
                     current.x++;
-//                    count++;
                 }
             }
         }
@@ -103,10 +99,121 @@ public class Day06 {
     }
 
     public int calculatePart2() {
-        return 0;
+        int count = 0;
+        Point start = new Point(0, 0);
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == '^') {
+                    start.setLocation(j, i);
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (i != start.y || j != start.x) {
+                    char c = grid[i][j];
+                    if (c == '.') {
+                        grid[i][j] = 'O';
+                        if (isLooping(grid)) {
+                            count++;
+                        }
+                        grid[i][j] = c;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    public boolean isLooping ( char[][] grid){
+        Point current = new Point(0, 0);
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == '^') {
+                    current.setLocation(j, i);
+                    break;
+                }
+            }
+        }
+        Direction direction = Direction.UP;
+        Position position = null;
+        while (current.x >= 0 && current.x <= grid[0].length - 1 && current.y >= 0 && current.y <= grid.length - 1) {
+            if (direction == Direction.UP) {
+                if (current.y == 0) {
+                    break;
+                } else if (grid[current.y - 1][current.x] == 'O') {
+                    if (position == null) {
+                        position = new Position();
+                        position.point = new Point(current.x, current.y);
+                        position.direction = Direction.UP;
+                        direction = Direction.RIGHT;
+                    } else if (position.point.equals(new Point(current.x, current.y)) && position.direction == Direction.UP) {
+                        return true;
+                    }
+                } else if (grid[current.y - 1][current.x] == '#') {
+                    direction = Direction.RIGHT;
+                } else {
+                    current.y--;
+                }
+            } else if (direction == Direction.DOWN) {
+                if (current.y == grid.length - 1) {
+                    break;
+                } else if (grid[current.y + 1][current.x] == 'O') {
+                    if (position == null) {
+                        position = new Position();
+                        position.point = new Point(current.x, current.y);
+                        position.direction = Direction.DOWN;
+                        direction = Direction.LEFT;
+                    } else if (position.point.equals(new Point(current.x, current.y)) && position.direction == Direction.DOWN) {
+                        return true;
+                    }
+                } else if (grid[current.y + 1][current.x] == '#') {
+                    direction = Direction.LEFT;
+                } else {
+                    current.y++;
+                }
+            } else if (direction == Direction.LEFT) {
+                if (current.x == 0) {
+                    break;
+                } else if (grid[current.y][current.x - 1] == '#' || grid[current.y][current.x - 1] == 'O') {
+                    if (position == null) {
+                        position = new Position();
+                        position.point = new Point(current.x, current.y);
+                        position.direction = Direction.LEFT;
+                    } else {
+                        return true;
+                    }
+                    direction = Direction.UP;
+                } else {
+                    current.x--;
+                }
+            } else {
+                if (current.x == grid[current.y].length - 1) {
+                    break;
+                } else if (grid[current.y][current.x + 1] == '#' || grid[current.y][current.x + 1] == 'O') {
+                    if (position == null) {
+                        position = new Position();
+                        position.point = new Point(current.x, current.y);
+                        position.direction = Direction.RIGHT;
+                    } else {
+                        return true;
+                    }
+                    direction = Direction.DOWN;
+                } else {
+                    current.x++;
+                }
+            }
+        }
+        return false;
     }
 
     private enum Direction {
         UP, DOWN, LEFT, RIGHT
+    }
+
+    private class Position {
+        Point point;
+        Direction direction;
     }
 }
